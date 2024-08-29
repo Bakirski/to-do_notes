@@ -6,4 +6,39 @@
 body{
     background-color: #bdaaa8;
     background-image: url("https://www.transparenttextures.com/patterns/45-degree-fabric-light.png");
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.sign-in-container{
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+    margin:auto;
+    border: 1px solid #d49c96;
+    background-color: #ee9746;
+    border-radius: 3px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+form h1{
+    text-align: center;
+}
+
+form label, form input{
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+form button{
+    margin-top: 30px;
+}
+
+.signup-text{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 20px;
 }
