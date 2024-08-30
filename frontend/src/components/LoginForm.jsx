@@ -5,10 +5,10 @@ function LoginForm(props) {
     email: "",
     password: "",
   });
-
+  const signed = false;
   //handleChange upisuje vrijednosti koje se unose u formu pomocu spread operatora i atributa event.target - a.
   function handleChange(event) {
-    const { name, value } = event.target;
+    const { value, name } = event.target;
     setFormData({
       ...formData,
       [name]: value,
@@ -27,9 +27,7 @@ function LoginForm(props) {
         "http://localhost:4000/main-page",
         formData
       );
-      {
-        props.onFormSubmit(response.data);
-      }
+      props.onFormSubmit(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -43,7 +41,7 @@ function LoginForm(props) {
   return (
     <div>
       <form onSubmit={handleSubmit} className="sign-in-container">
-        <h1>Sign in</h1>
+        <h1>Sign In</h1>
         <label for="email">Email</label>
         <input
           type="text"
@@ -62,10 +60,15 @@ function LoginForm(props) {
           onChange={handleChange}
           value={formData.password}
         />
-        <button type="submit">Log In</button>
-        <p className="signup-text">
-          Don't Have an Account? <a href="/">Sign Up</a>
-        </p>
+        <button type="submit">Sign In</button>
+        <button
+          className="not-registered-button"
+          onClick={() => {
+            props.onClicked(signed);
+          }}
+        >
+          Not Registered? Sign Up
+        </button>
       </form>
     </div>
   );

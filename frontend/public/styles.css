@@ -16,11 +16,27 @@ body{
     margin:auto;
     border: 1px solid #d49c96;
     background-color: #ee9746;
-    border-radius: 3px;
+    border-radius: 6px;
     padding-left: 30px;
     padding-right: 30px;
     padding-bottom: 10px;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin-top: 10%;
+}
+
+.sign-up-container {
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+    margin: auto;
+    border: 1px solid #d49c96;
+    background-color: #ee9746;
+    border-radius: 6px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin-top: 10%;
 }
 
 form h1{
@@ -41,4 +57,57 @@ form button{
     font-size: 12px;
     text-align: center;
     margin-top: 20px;
+}
+
+#confirmPassword{
+    width: 97%;
+}
+
+.not-registered-button, .already-have-account-btn{
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.create-note-container{
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+    border: 1px solid #e6e0df; 
+    border-radius: 2px;
+    background-color: #bdaaa8;
+    position: relative;
+}
+
+.create-note-container input, .create-note-container textarea{
+    background-color: #dfcdcb;
+    color: rgb(15, 30, 61);
+    font-size: 20px;
+    border: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    
+}
+
+
+.create-note-container textarea{
+    resize: none;
+}
+
+.create-note-button {
+    width: 25%;
+    align-self: center;
+    position: absolute;
+    bottom: -40px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    background-color: #dac2bf;
+    height: 40px;
+    cursor: pointer;
+}
+
+.create-note-button:hover{
+    opacity: 0.6;
 }

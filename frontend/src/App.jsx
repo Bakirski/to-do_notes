@@ -3,33 +3,74 @@ import axios from "axios";
 import Header from "./components/Header.jsx";
 import LandingPage from "./components/LandingPage.jsx";
 import LoginForm from "./components/LoginForm.jsx";
-
+import ToDo from "./components/ToDo.jsx";
+import CreateNote from "./components/CreateNote.jsx";
+import Note from "./components/Note.jsx";
+import RegisterForm from "./components/RegisterForm.jsx";
 function App() {
-  const [data, setData] = useState(null);
   const [submittedData, setSubmittedData] = useState(null);
-  useEffect(() => {
-    fetch("http://localhost:4000/backend")
-      .then((res) => res.json())
-      .then((data) => setData(data.message))
-      .catch((err) => console.log(err));
-  }, []);
+  const [notes, setNotes] = useState([]);
+  const [signedUp, setSignedUp] = useState(false);
+
+  function toggleForm(signed) {
+    setSignedUp(signed);
+  }
+
+  function addNote(noteItem) {
+    setNotes([...notes, noteItem]);
+  }
+
+  function deleteNote(id) {
+    setNotes((prevNotes) => {
+      return prevNotes.filter((item, index) => {
+        return index !== id;
+      });
+    });
+  }
 
   function handleFormSubmit(data) {
     setSubmittedData(data);
     console.log("Data received from form: ", data);
   }
 
-  return (
-    <div>
-      <Header />
-      <p>{data ? data : "Nothing to see here..."}</p>
-      <LoginForm onFormSubmit={handleFormSubmit} />
+  /*      <LoginForm onFormSubmit={handleFormSubmit} />
       {submittedData && (
         <div>
           <h2>Data from form</h2>
           <p>email: {submittedData.email}</p>
           <p>password: {submittedData.password}</p>
         </div>
+      )}
+      <ToDo /> */
+  /*      <CreateNote onAdd={addNote} />
+      {notes.map((item, index) => {
+        return (
+          <Note
+            key={index}
+            id={index}
+            title={item.title}
+            content={item.content}
+            onClicked={deleteNote}
+          />
+        );
+      })}
+             {submittedData && (
+        <div>
+          <h2>Data from form</h2>
+          <p>name: {submittedData.name}</p>
+          <p>email: {submittedData.email}</p>
+          <p>password: {submittedData.password}</p>
+          <p>Confirmed Pass: {submittedData.confirmPassword}</p>
+        </div>
+      )} 
+      */
+  return (
+    <div>
+      <Header />
+      {signedUp === false ? (
+        <RegisterForm onFormSubmit={handleFormSubmit} onClicked={toggleForm} />
+      ) : (
+        <LoginForm onFormSubmit={handleFormSubmit} onClicked={toggleForm} />
       )}
     </div>
   );
