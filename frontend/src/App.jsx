@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import Header from "./components/Header.jsx";
-import LandingPage from "./components/LandingPage.jsx";
 import LoginForm from "./components/LoginForm.jsx";
 import ToDo from "./components/ToDo.jsx";
 import CreateNote from "./components/CreateNote.jsx";
@@ -11,7 +9,8 @@ function App() {
   const [submittedData, setSubmittedData] = useState(null);
   const [notes, setNotes] = useState([]);
   const [signedUp, setSignedUp] = useState(false);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [view, setView] = useState(null);
   function toggleForm(signed) {
     setSignedUp(signed);
   }
@@ -30,47 +29,66 @@ function App() {
 
   function handleFormSubmit(data) {
     setSubmittedData(data);
+    setIsAuthenticated(true);
+
     console.log("Data received from form: ", data);
   }
 
-  /*      <LoginForm onFormSubmit={handleFormSubmit} />
-      {submittedData && (
-        <div>
-          <h2>Data from form</h2>
-          <p>email: {submittedData.email}</p>
-          <p>password: {submittedData.password}</p>
+  /*  <div className="app-options">
+      <button onClick={() => setView("todo")}>To-Do List</button>
+      <button onClick={() => setView("notes")}>Notes App</button>
         </div>
-      )}
-      <ToDo /> */
-  /*      <CreateNote onAdd={addNote} />
-      {notes.map((item, index) => {
-        return (
-          <Note
-            key={index}
-            id={index}
-            title={item.title}
-            content={item.content}
-            onClicked={deleteNote}
+  */
+
+  /* {submittedData && <Header name={submittedData.name} />}
+      {!isAuthenticated ? (
+        signedUp === false ? (
+          <RegisterForm
+            onFormSubmit={handleFormSubmit}
+            onClicked={toggleForm}
           />
-        );
-      })}
-             {submittedData && (
-        <div>
-          <h2>Data from form</h2>
-          <p>name: {submittedData.name}</p>
-          <p>email: {submittedData.email}</p>
-          <p>password: {submittedData.password}</p>
-          <p>Confirmed Pass: {submittedData.confirmPassword}</p>
-        </div>
-      )} 
-      */
+        ) : (
+          <LoginForm onFormSubmit={handleFormSubmit} onClicked={toggleForm} />
+        )
+      ) : (
+        //Ovdje buttons
+      )}*/
   return (
     <div>
-      <Header />
-      {signedUp === false ? (
-        <RegisterForm onFormSubmit={handleFormSubmit} onClicked={toggleForm} />
+      {submittedData && <Header name={submittedData.name} />}
+      {!isAuthenticated ? (
+        signedUp === false ? (
+          <RegisterForm
+            onFormSubmit={handleFormSubmit}
+            onClicked={toggleForm}
+          />
+        ) : (
+          <LoginForm onFormSubmit={handleFormSubmit} onClicked={toggleForm} />
+        )
       ) : (
-        <LoginForm onFormSubmit={handleFormSubmit} onClicked={toggleForm} />
+        <div className="app-options">
+          <button onClick={() => setView("todo")}>To-Do List</button>
+          <button onClick={() => setView("notes")}>Notes App</button>
+        </div>
+      )}
+      {view === "todo" && <ToDo />}
+      {view === "notes" && (
+        <div>
+          <CreateNote onAdd={addNote} />
+          <div className="notes-grid-container">
+            {notes.map((item, index) => {
+              return (
+                <Note
+                  key={index}
+                  id={index}
+                  title={item.title}
+                  content={item.content}
+                  onClicked={deleteNote}
+                />
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );

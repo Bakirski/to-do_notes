@@ -18,22 +18,24 @@ function ToDo() {
     });
   }
   return (
-    <div>
-      <div>
-        <h1>To-Do List</h1>
-        <InputArea onAdd={addItem} />
-      </div>
-      <div>
-        <ul>
-          {items.map((todoItem, index) => (
-            <ToDoItem
-              key={index}
-              id={index}
-              text={todoItem}
-              onChecked={deleteItem}
-            />
-          ))}
-        </ul>
+    <div className="to-do-list">
+      <div className="to-do-list-container">
+        <div>
+          <h1>To-Do List</h1>
+          <InputArea onAdd={addItem} />
+        </div>
+        <div className="to-do-items">
+          <ul>
+            {items.map((todoItem, index) => (
+              <ToDoItem
+                key={index}
+                id={index}
+                text={todoItem}
+                onChecked={deleteItem}
+              />
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

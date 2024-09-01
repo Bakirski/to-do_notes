@@ -15,34 +15,36 @@ function CreateNote(props) {
 
   return (
     <div>
-      <div className="create-note-container">
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          onChange={handleChange}
-          value={noteItem.title}
-        />
-        <textarea
-          type="text"
-          rows="3"
-          placeholder="Take A Note..."
-          name="content"
-          onChange={handleChange}
-          value={noteItem.content}
-        />
-        <button
-          className="create-note-button"
-          onClick={() => {
-            props.onAdd(noteItem);
-            setNoteItem({
-              title: "",
-              content: "",
-            });
-          }}
-        >
-          Add
-        </button>
+      <div className="flex-container">
+        <div className="create-note-container">
+          <input
+            type="text"
+            name="title"
+            placeholder="Title"
+            onChange={handleChange}
+            value={noteItem.title}
+          />
+          <textarea
+            type="text"
+            rows="3"
+            placeholder="Take A Note..."
+            name="content"
+            onChange={handleChange}
+            value={noteItem.content}
+          />
+          <button
+            className="create-note-button"
+            onClick={() => {
+              props.onAdd(noteItem);
+              setNoteItem({
+                title: "",
+                content: "",
+              });
+            }}
+          >
+            Add
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,6 @@
+
 .firstHeader{
+    margin-top: 40px;
     text-align: center;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
@@ -15,7 +17,7 @@ body{
     width: 15%;
     margin:auto;
     border: 1px solid #d49c96;
-    background-color: #ee9746;
+    background-color: #ebbab3;
     border-radius: 6px;
     padding-left: 30px;
     padding-right: 30px;
@@ -30,7 +32,7 @@ body{
     width: 15%;
     margin: auto;
     border: 1px solid #d49c96;
-    background-color: #ee9746;
+    background-color: #ebbab3;
     border-radius: 6px;
     padding-left: 30px;
     padding-right: 30px;
@@ -72,11 +74,18 @@ form button{
 .create-note-container{
     display: flex;
     flex-direction: column;
-    width: 15%;
     border: 1px solid #e6e0df; 
     border-radius: 2px;
     background-color: #bdaaa8;
     position: relative;
+    margin-top: 5%;
+    width: 20%;
+}
+
+.flex-container{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
 }
 
 .create-note-container input, .create-note-container textarea{
@@ -94,7 +103,7 @@ form button{
     resize: none;
 }
 
-.create-note-button {
+.create-note-button,.note-flex-container button {
     width: 25%;
     align-self: center;
     position: absolute;
@@ -106,8 +115,97 @@ form button{
     background-color: #dac2bf;
     height: 40px;
     cursor: pointer;
+    border: 1px solid #dfdfdf;
 }
 
-.create-note-button:hover{
+.create-note-button:hover, .note-flex-container button:hover, .to-do-list button:hover{
     opacity: 0.6;
+}
+
+.app-options{
+    display: flex;
+    justify-content: center;
+    margin-top: 5%;
+}
+
+.app-options button{
+    padding: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.to-do-list{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5%;
+}
+
+.to-do-list-container{
+    width: 20%;
+    padding-top: 20px;
+    min-height: 400px;
+    border-radius: 10px;
+    background-color: #dac2bf;
+    box-shadow: 3px 3px 5px 1px #bea8a5;
+}
+
+.item-add{
+    display: flex;
+    justify-content: center;
+    align-items: top;
+}
+
+.to-do-list input, .to-do-list button{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.to-do-list input{
+    border: none;
+    width: 60%;
+    height: 20px;
+    background-color: transparent;
+    
+}
+
+.to-do-list h1{
+    font-size: 26px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.to-do-list button{
+    width: 15%;
+    border-radius: 20px;
+    margin-left: 5px;
+    background-color: #f3dcd9;
+    border: none;
+}
+
+
+.to-do-items{
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.to-do-items ul li{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+
+.notes-grid-container{
+    margin-top: 5%;
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 20px;
+}
+
+.note-flex-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #dfcdcb;
+    box-sizing: border-box;
+    border-radius: 5px;
+    position: relative;
 }

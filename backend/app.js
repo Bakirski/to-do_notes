@@ -26,10 +26,32 @@ app.get("/backend", (req, res) => {
 
 //data simulira spremanje podataka. zamijeniti sa bazom iz postgresa
 app.post("/main-page", async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
-  const data = { id: 1, name, email, password, confirmPassword };
-
-  res.status(201).json(data);
+  //const { name, email, password, confirmPassword } = req.body;
+  //const data = { id: 1, name, email, password, confirmPassword };
+  const email = req.body.email;
+  const password = req.body.password;
+  if (req.body.confirmPassword) {
+    if (password == req.body.confirmPassword) {
+      const data = await db.query(
+        "INSERT INTO users(name,email,password) VALUES($1,$2,$3) RETURNING name",
+        [req.body.name, email, password]
+      );
+      const userName = data.rows[0];
+      console.log(data.rows[0]);
+      res.status(201).json(userName);
+    } else {
+      console.log("Passwords must match.");
+    }
+  } else {
+    try {
+      const data2 = await db.query("SELECT name FROM users WHERE email = $1", [
+        email,
+      ]);
+      res.status(201).json(data2.rows[0]);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 });
 
 app.listen(port, () => {

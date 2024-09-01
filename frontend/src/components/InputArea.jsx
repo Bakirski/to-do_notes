@@ -8,7 +8,7 @@ function InputArea(props) {
   }
 
   return (
-    <div>
+    <div className="item-add">
       <input
         type="text"
         value={inputText}
@@ -21,7 +21,7 @@ function InputArea(props) {
           setInputText("");
         }}
       >
-        Add
+        +
       </button>
     </div>
   );
