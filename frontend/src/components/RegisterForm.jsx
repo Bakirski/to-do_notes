@@ -7,7 +7,7 @@ function RegisterForm(props) {
     password: "",
     confirmPassword: "",
   });
-  const signed = true;
+  const signed = false;
 
   function handleChange(event) {
     const { value, name } = event.target;
@@ -22,7 +22,7 @@ function RegisterForm(props) {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/main-page",
+        "http://localhost:4000/register",
         formData
       );
       props.onFormSubmit(response.data);

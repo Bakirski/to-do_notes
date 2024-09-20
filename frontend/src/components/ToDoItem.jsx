@@ -7,7 +7,13 @@ function ToDoItem(props) {
         props.onChecked(props.id);
       }}
     >
-      <li>{props.text}</li>
+      <div className="list-item-container">
+        <li>{props.text}</li>
+        <div>
+          <button>Edit</button>
+          <button>Delete</button>
+        </div>
+      </div>
     </div>
   );
 }

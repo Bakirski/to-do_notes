@@ -5,7 +5,7 @@ function LoginForm(props) {
     email: "",
     password: "",
   });
-  const signed = false;
+  const signed = true;
   //handleChange upisuje vrijednosti koje se unose u formu pomocu spread operatora i atributa event.target - a.
   function handleChange(event) {
     const { value, name } = event.target;
@@ -24,7 +24,7 @@ function LoginForm(props) {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/main-page",
+        "http://localhost:4000/login",
         formData
       );
       props.onFormSubmit(response.data);

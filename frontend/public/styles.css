@@ -103,7 +103,7 @@ form button{
     resize: none;
 }
 
-.create-note-button,.note-flex-container button {
+.create-note-button, .delete-button,.edit-button,.save-button {
     width: 25%;
     align-self: center;
     position: absolute;
@@ -194,6 +194,7 @@ form button{
     font-size: 22px;
 }
 
+
 .notes-grid-container{
     margin-top: 5%;
     display: grid;
@@ -207,5 +208,21 @@ form button{
     background-color: #dfcdcb;
     box-sizing: border-box;
     border-radius: 5px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
     position: relative;
+}
+
+.list-item-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.edit-button{
+    left: 0;
+}
+
+.save-button{
+    right: 0;
 }
