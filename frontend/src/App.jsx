@@ -6,6 +6,8 @@ import CreateNote from "./components/CreateNote.jsx";
 import Note from "./components/Note.jsx";
 import RegisterForm from "./components/RegisterForm.jsx";
 import EditNote from "./components/EditNote.jsx";
+import NoteExplorer from "./components/NoteExplorer.jsx";
+import axios from "axios";
 
 function App() {
   const [submittedData, setSubmittedData] = useState(null);
@@ -46,15 +48,26 @@ function App() {
     setEditedNote({ title: editingNote.title, content: editingNote.content });
   }
 
+  async function saveNote(title, content) {
+    console.log(title, content);
+    try {
+      const response = await axios.post("http://localhost:4000/notes", {
+        title,
+        content,
+      });
+      console.log(response);
+    } catch (error) {
+      console.error("Error saving note: ", error);
+    }
+  }
+
   function handleFormSubmit(data) {
     setSubmittedData(data);
     if (data) {
       setIsAuthenticated(true);
     }
   }
-
-  return (
-    <div>
+  /*<div>
       {submittedData ? (
         submittedData ? (
           <Header name={submittedData} />
@@ -100,6 +113,63 @@ function App() {
                   content={item.content}
                   onClicked={deleteNote}
                   onEdit={handleEdit}
+                  onSave={saveNote}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>*/
+  return (
+    <div>
+      {submittedData ? (
+        submittedData ? (
+          <Header name={submittedData} />
+        ) : (
+          <h3>{submittedData}</h3>
+        )
+      ) : null}
+
+      {isAuthenticated === false ? (
+        signedUp === false ? (
+          <LoginForm onFormSubmit={handleFormSubmit} onClicked={toggleForm} />
+        ) : (
+          <RegisterForm
+            onFormSubmit={handleFormSubmit}
+            onClicked={toggleForm}
+          />
+        )
+      ) : (
+        <div className="app-options">
+          <button onClick={() => setView("todo")}>To-Do List</button>
+          <button onClick={() => setView("notes")}>Notes App</button>
+        </div>
+      )}
+      {view === "todo" && <ToDo />}
+      {view === "notes" && (
+        <div>
+          <NoteExplorer name={submittedData} addToNotes={addNote} />
+          {editMode === false ? (
+            <CreateNote onAdd={addNote} />
+          ) : (
+            <EditNote
+              title={editedNote.title}
+              content={editedNote.content}
+              onChanged={addNote}
+            />
+          )}
+          <div className="notes-grid-container">
+            {notes.map((item, index) => {
+              return (
+                <Note
+                  key={index}
+                  id={index}
+                  title={item.title}
+                  content={item.content}
+                  onClicked={deleteNote}
+                  onEdit={handleEdit}
+                  onSave={saveNote}
                 />
               );
             })}

@@ -23,9 +23,10 @@ function Note(props) {
           Delete
         </button>
         <button
+          type="submit"
           className="save-button"
           onClick={() => {
-            props.onSave();
+            props.onSave(props.title, props.content);
           }}
         >
           Save

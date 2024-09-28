@@ -4,10 +4,12 @@ import cors from "cors";
 import pg from "pg";
 import env from "dotenv";
 import bcrypt from "bcrypt";
+
 const app = express();
 const port = 4000;
 const api_url = "http://localhost:4000";
 const saltRounds = 10;
+let currentUserID = null;
 
 env.config();
 const db = new pg.Client({
@@ -42,9 +44,10 @@ app.post("/register", async (req, res) => {
           console.log("Error hashing password: ", err);
         } else {
           const data = await db.query(
-            "INSERT INTO users(name,email,password) VALUES($1,$2,$3) RETURNING name",
+            "INSERT INTO users(name,email,password) VALUES($1,$2,$3) RETURNING id,name",
             [req.body.name, email, hash]
           );
+          currentUserID = data.rows[0].id;
           const userName = data.rows[0].name;
           res.status(201).json(userName);
         }
@@ -65,7 +68,7 @@ app.post("/login", async (req, res) => {
     if (data.rows.length > 0) {
       const user = data.rows[0];
       const hashedPassword = user.password;
-
+      currentUserID = user.id;
       bcrypt.compare(password, hashedPassword, (err, result) => {
         if (err) {
           console.log("Error comparing passwords: ", err);
@@ -83,6 +86,39 @@ app.post("/login", async (req, res) => {
     }
   } catch (err) {
     console.log(err);
+  }
+});
+
+app.post("/notes", async (req, res) => {
+  const { title, content } = req.body;
+  try {
+    const data = await db.query(
+      "INSERT INTO user_notes(title,content,userid) VALUES($1,$2,$3) RETURNING *",
+      [title, content, currentUserID]
+    );
+    res.json(data);
+  } catch (error) {
+    console.error("Error inserting note: ", error);
+  }
+});
+
+app.get("/get-notes", async (req, res) => {
+  try {
+    const data = await db.query("SELECT id,title FROM user_notes");
+    res.json(data.rows);
+  } catch (error) {
+    console.error("Error fetching notes: ", error);
+  }
+});
+
+app.post("/display-note", async (req, res) => {
+  const id = req.body.id;
+  try {
+    const data = await db.query("SELECT * FROM user_notes WHERE id = $1", [id]);
+    console.log(data.rows);
+    res.json(data.rows);
+  } catch (error) {
+    console.error("Error getting note: ", error);
   }
 });
 
