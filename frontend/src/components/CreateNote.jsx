@@ -42,7 +42,7 @@ function CreateNote(props) {
               });
             }}
           >
-            Add
+            ➤
           </button>
         </div>
       </div>

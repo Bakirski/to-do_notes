@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function EditNote(props) {
-  const editMode = false;
+  //const editMode = false;
   const [noteItem, setNoteItem] = useState({
     title: props.title,
     content: props.content,

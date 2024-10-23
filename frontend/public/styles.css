@@ -148,6 +148,26 @@ form button{
     border-radius: 10px;
     background-color: #dac2bf;
     box-shadow: 3px 3px 5px 1px #bea8a5;
+    position: absolute;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.to-do-buttons{
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: -45px;
+    width: 100%;
+}
+
+.to-do-button{
+    border-radius: 20px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: #f3dcd9;
+    border: none;
+    padding: 15px;
 }
 
 .item-add{
@@ -174,7 +194,7 @@ form button{
     margin-bottom: 40px;
 }
 
-.to-do-list button{
+.input-area-button{
     width: 15%;
     border-radius: 20px;
     margin-left: 5px;
@@ -216,7 +236,24 @@ form button{
 .list-item-container{
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    align-items: center;
+}
+
+.left-item{
+    margin-right: auto;
+}
+
+.to-do-item-buttons{
+    display: flex;
+    gap:10px;
+    margin-right: 20px;
+}
+
+.to-do-item-button{
+    border-radius: 20px;
+    background-color: #f3dcd9;
+    border: none;
+    padding: 5px;
 }
 
 .edit-button{

@@ -16,12 +16,13 @@ function InputArea(props) {
         placeholder="Add an Item..."
       />
       <button
+        className="input-area-button"
         onClick={() => {
-          props.onAdd(inputText);
+          props.saveNote(inputText);
           setInputText("");
         }}
       >
-        +
+        ➤
       </button>
     </div>
   );

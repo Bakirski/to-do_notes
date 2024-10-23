@@ -26,7 +26,7 @@ function Note(props) {
           type="submit"
           className="save-button"
           onClick={() => {
-            props.onSave(props.title, props.content);
+            props.onSave(props.id, props.title, props.content);
           }}
         >
           Save
