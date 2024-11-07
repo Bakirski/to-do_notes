@@ -1,3 +1,4 @@
+// App.js
 import React, { useState } from "react";
 import Header from "./components/Header.jsx";
 import LoginForm from "./components/LoginForm.jsx";
@@ -8,6 +9,7 @@ import RegisterForm from "./components/RegisterForm.jsx";
 import EditNote from "./components/EditNote.jsx";
 import NoteExplorer from "./components/NoteExplorer.jsx";
 import axios from "axios";
+import Collapse from "@mui/material/Collapse";
 
 function App() {
   const [submittedData, setSubmittedData] = useState(null);
@@ -17,43 +19,53 @@ function App() {
   const [view, setView] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editedNote, setEditedNote] = useState({ title: "", content: "" });
+  const [showRegister, setShowRegister] = useState(true);
+  const [showCurrentForm, setShowCurrentForm] = useState(true);
 
-  //na osnovu vrijednosti signed varijable toggle-uje izmedju register i login forme
-  function toggleForm(signed) {
-    setSignedUp(signed);
+  function handleToggleForm() {
+    setShowCurrentForm(false); // Start collapsing out the current form
+
+    // After 500ms (duration of Collapse animation), toggle the form and collapse it in
+    setTimeout(() => {
+      setSignedUp((prev) => !prev);
+      setShowCurrentForm(true); // Collapse in the new form
+    }, 300);
   }
 
-  //iskljucuje edit mode ukoliko je trenutno aktivan i popunjava notes u privremenu memoriju
+  // Toggles between register and login forms based on signed variable
+  function toggleForm(signed) {
+    setSignedUp(!signed);
+  }
+
+  // Disables edit mode if active and adds note to temporary storage
   function addNote(noteItem) {
     setEditMode(false);
     setNotes([...notes, noteItem]);
   }
 
-  //brise odabrani note tako sto trazi index koji se poklapa sa proslijeđenim
+  // Deletes a selected note by finding a matching index with the provided id
   function deleteNote(id) {
     setNotes((prevNotes) => {
-      return prevNotes.filter((item, index) => {
-        return index !== id;
-      });
+      return prevNotes.filter((item, index) => index !== id);
     });
   }
 
-  //klikom na edit, brise note iz privremenog niza notes-a i poziva editNote funkciju
+  // Triggers edit by removing note from temporary array and calling editNote function
   function handleEdit(id) {
     editNote(id);
     deleteNote(id);
   }
 
-  //trazi note koji odgovara proslijeđenom id-u i toggle-uje edit mode
+  // Finds note matching provided id and toggles edit mode
   function editNote(id) {
     const noteId = parseInt(id);
-    const editingNote = notes.find((element) => id === noteId);
+    const editingNote = notes.find((element, index) => index === noteId);
     console.log(editingNote);
     setEditMode(true);
     setEditedNote({ title: editingNote.title, content: editingNote.content });
   }
 
-  //sprema note u bazu podataka u postgresu
+  // Saves note to PostgreSQL database
   async function saveNote(id, title, content) {
     console.log(title, content);
     try {
@@ -68,9 +80,10 @@ function App() {
     }
   }
 
-  /*ukoliko je login odnosno register uspjesan, vracaju se podaci o korisniku
-  ukoliko postoje vraceni podaci authenticated postaje true i korisnik
-  dobija pristup ostatku stranice
+  /*
+    If login or registration is successful, returns user data if available.
+    If returned data exists, authenticated is set to true and user gains
+    access to the rest of the app.
   */
   function handleFormSubmit(data) {
     setSubmittedData(data);
@@ -80,68 +93,72 @@ function App() {
   }
 
   /*
-    submittedData se odnosi na povratnu informaciju
-    koja se vraca kada korisnik pokusa obaviti login
-    ili register. Vraca ime korisnika ili poruku greske
-    zavisno od toga da li je login/register uspjesan.
-
-    Ako je isAuthenticated true, renderuje se ostatak
-    programa (placeholder buttons).
-    ToDo list i notes app opcije
-    Zavisno od odabira renderuju se potrebne komponente.
+    submittedData holds the return data when a user attempts login or
+    registration, returning either the user's name or an error message
+    based on the outcome of login/register. If isAuthenticated is true,
+    the rest of the program is rendered (placeholder buttons).
+    
+    Options include To-Do list and notes app, rendering the relevant
+    components based on user selection.
   */
   return (
     <div>
-      {submittedData ? (
-        submittedData ? (
-          <Header name={submittedData} />
-        ) : (
-          <h3>{submittedData}</h3>
-        )
-      ) : null}
+      {submittedData ? <Header name={submittedData} /> : null}
 
-      {isAuthenticated === false ? (
-        signedUp === false ? (
-          <LoginForm onFormSubmit={handleFormSubmit} onClicked={toggleForm} />
-        ) : (
-          <RegisterForm
-            onFormSubmit={handleFormSubmit}
-            onClicked={toggleForm}
-          />
-        )
+      {!isAuthenticated ? (
+        <div>
+          <Collapse in={showCurrentForm} timeout={500}>
+            <div>
+              {signedUp ? (
+                <RegisterForm
+                  onFormSubmit={handleFormSubmit}
+                  onClicked={handleToggleForm}
+                />
+              ) : (
+                <LoginForm
+                  onFormSubmit={handleFormSubmit}
+                  onClicked={handleToggleForm}
+                />
+              )}
+            </div>
+          </Collapse>
+        </div>
       ) : (
         <div className="app-options">
-          <button onClick={() => setView("todo")}>To-Do List</button>
-          <button onClick={() => setView("notes")}>Notes App</button>
+          <button onClick={() => setView("todo")} className="to-do-app-div">
+            To-Do List
+          </button>
+          <button onClick={() => setView("notes")} className="notes-app-div">
+            Notes App
+          </button>
         </div>
       )}
+
       {view === "todo" && <ToDo />}
       {view === "notes" && (
         <div>
           <NoteExplorer name={submittedData} addToNotes={addNote} />
-          {editMode === false ? (
-            <CreateNote onAdd={addNote} />
-          ) : (
+          {editMode ? (
             <EditNote
               title={editedNote.title}
               content={editedNote.content}
               onChanged={addNote}
             />
+          ) : (
+            <CreateNote onAdd={addNote} />
           )}
           <div className="notes-grid-container">
-            {notes.map((item, index) => {
-              return (
-                <Note
-                  key={index}
-                  id={index}
-                  title={item.title}
-                  content={item.content}
-                  onClicked={deleteNote}
-                  onEdit={handleEdit}
-                  onSave={saveNote}
-                />
-              );
-            })}
+            {notes.map((item, index) => (
+              <Note
+                key={index}
+                id={index}
+                title={item.title}
+                content={item.content}
+                onClicked={deleteNote}
+                onEdit={handleEdit}
+                onSave={saveNote}
+              />
+            ))}
           </div>
         </div>
       )}

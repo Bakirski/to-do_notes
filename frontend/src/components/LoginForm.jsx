@@ -39,10 +39,12 @@ function LoginForm(props) {
   na dnu ide submit button umjesto input elementa.
   */
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="sign-in-container">
-        <h1>Sign In</h1>
-        <label for="email">Email</label>
+    <div className="auth-container">
+      <form onSubmit={handleSubmit} className="auth-content">
+        <h1 className="auth-title">Sign In</h1>
+        <label htmlFor="email" className="auth-label">
+          Email
+        </label>
         <input
           type="text"
           placeholder="johndoe@gmail.com"
@@ -50,8 +52,11 @@ function LoginForm(props) {
           name="email"
           onChange={handleChange}
           value={formData.email}
+          className="auth-input"
         />
-        <label for="password">Password</label>
+        <label htmlFor="password" className="auth-label">
+          Password
+        </label>
         <input
           type="password"
           placeholder="********"
@@ -59,16 +64,20 @@ function LoginForm(props) {
           name="password"
           onChange={handleChange}
           value={formData.password}
+          className="auth-input"
         />
-        <button type="submit">Sign In</button>
-        <button
-          className="not-registered-button"
-          onClick={() => {
-            props.onClicked(signed);
-          }}
-        >
-          Not Registered? Sign Up
-        </button>
+        <div className="auth-buttons">
+          <button type="submit" className="auth-button">
+            Sign In
+          </button>
+          <button
+            type="button"
+            className="auth-toggle-button"
+            onClick={props.onClicked}
+          >
+            Not Registered? Sign Up
+          </button>
+        </div>
       </form>
     </div>
   );
