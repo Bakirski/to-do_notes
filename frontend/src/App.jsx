@@ -104,7 +104,16 @@ function App() {
   return (
     <div>
       {submittedData ? <Header name={submittedData} /> : null}
-
+      {view !== null && (
+        <div
+          className="back-button-container"
+          onClick={() => {
+            setView(null);
+          }}
+        >
+          <button>Back</button>
+        </div>
+      )}
       {!isAuthenticated ? (
         <div>
           <Collapse in={showCurrentForm} timeout={500}>
@@ -124,14 +133,18 @@ function App() {
           </Collapse>
         </div>
       ) : (
-        <div className="app-options">
-          <button onClick={() => setView("todo")} className="to-do-app-div">
-            To-Do List
-          </button>
-          <button onClick={() => setView("notes")} className="notes-app-div">
-            Notes App
-          </button>
-        </div>
+        view === null && (
+          <div className="app-options">
+            <button
+              onClick={() => setView("todo")}
+              className="to-do-app-div"
+            ></button>
+            <button
+              onClick={() => setView("notes")}
+              className="notes-app-div"
+            ></button>
+          </div>
+        )
       )}
 
       {view === "todo" && <ToDo />}

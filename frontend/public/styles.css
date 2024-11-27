@@ -1,4 +1,6 @@
-
+html{
+    height: 100%;
+}
 .firstHeader{
     margin-top: 40px;
     text-align: center;
@@ -9,7 +11,7 @@ body{
     background-color: #bdaaa8;
     background-image: url("images/bck-img.png");
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: 100vw 100vh;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
@@ -76,9 +78,7 @@ form button{
 .create-note-container{
     display: flex;
     flex-direction: column;
-    border: 1px solid #e6e0df; 
     border-radius: 2px;
-    background-color: #bdaaa8;
     position: relative;
     margin-top: 5%;
     width: 20%;
@@ -91,13 +91,13 @@ form button{
 }
 
 .create-note-container input, .create-note-container textarea{
-    background-color: #dfcdcb;
     color: rgb(15, 30, 61);
     font-size: 20px;
     border: none;
     padding-top: 5px;
     padding-bottom: 5px;
-    
+    background-color: #dd4c5182;
+    margin: 0;
 }
 
 
@@ -114,10 +114,10 @@ form button{
     border-top-right-radius: 0;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
-    background-color: #dac2bf;
+    background-color: #d94952;
     height: 40px;
     cursor: pointer;
-    border: 1px solid #dfdfdf;
+    border: none;
 }
 
 .create-note-button:hover, .note-flex-container button:hover, .to-do-list button:hover{
@@ -132,12 +132,26 @@ form button{
 }
 
 .app-options button{
-   /* width: 30%;
+    width: 30%;
     height: 30rem;
     background-color: #bdaaa8;
     border: none;
     border-radius: 10px;
-    */
+    background-size: cover;
+    background-blend-mode: color-burn;
+}
+
+.to-do-app-div{
+    background-image: url("images/todo-img.jpg");
+
+}
+
+.to-do-app-div:hover, .notes-app-div:hover{
+    opacity: 0.8;
+    transition: 0.3s;
+}
+.notes-app-div{
+    background-image: url("images/notes-img.jpeg");
 }
 
 .to-do-list{
@@ -152,8 +166,8 @@ form button{
     padding-top: 20px;
     min-height: 400px;
     border-radius: 10px;
-    background-color: #dac2bf;
-    box-shadow: 3px 3px 5px 1px #bea8a5;
+    background-image: linear-gradient(#f98148, #600c6a);
+    box-shadow: 3px 3px 5px 1px #bb395a54;
     position: absolute;
     border-top-right-radius: 0;
     border-top-left-radius: 0;
@@ -174,6 +188,7 @@ form button{
     background-color: #f3dcd9;
     border: none;
     padding: 15px;
+    background-color:#f77f48;
 }
 
 .item-add{
@@ -204,8 +219,10 @@ form button{
     width: 15%;
     border-radius: 20px;
     margin-left: 5px;
-    background-color: #f3dcd9;
-    border: none;
+    background-color: transparent;
+    border-color: #f17b4a;
+    border-style: solid;
+
 }
 
 
@@ -231,7 +248,7 @@ form button{
 .note-flex-container{
     display: flex;
     flex-direction: column;
-    background-color: #dfcdcb;
+    background-color: #d94952;
     box-sizing: border-box;
     border-radius: 5px;
     border-bottom-left-radius: 0;
@@ -257,7 +274,7 @@ form button{
 
 .to-do-item-button{
     border-radius: 20px;
-    background-color: #f3dcd9;
+    background-color: transparent;
     border: none;
     padding: 5px;
 }
@@ -275,9 +292,9 @@ form button{
     flex-direction: column;
     width: 15%;
     min-height: 15rem;
-    background-color: #e4c4c1;
+    background-color: #dd4c5182;
     border: 10px;
-    box-shadow: 0px 0px 5px 1px #bea8a5;
+    box-shadow: 0px 0px 5px 1px #312a29;
     position: absolute;
     left: 5rem;
     top: 10rem;
@@ -297,3 +314,19 @@ form button{
     border: none;
 }
 
+.back-button-container{
+    display: flex;
+    justify-content: center;
+}
+.back-button-container button{
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    background-color:#e48253 ;
+}
+
+.back-button-container button:hover{
+    opacity: 0.8;
+}
