@@ -314,11 +314,11 @@ form button{
     border: none;
 }
 
-.back-button-container{
+.back-button-container, .logout-button-container{
     display: flex;
     justify-content: center;
 }
-.back-button-container button{
+.back-button-container button, .logout-button-container button{
     padding: 5px;
     border: none;
     border-radius: 5px;
@@ -327,6 +327,10 @@ form button{
     background-color:#e48253 ;
 }
 
-.back-button-container button:hover{
+.back-button-container button:hover, .logout-button-container button:hover{
     opacity: 0.8;
+}
+
+.logout-button-container{
+    margin-top: 2rem;
 }

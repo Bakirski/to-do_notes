@@ -5,7 +5,8 @@ import pg from "pg";
 import env from "dotenv";
 import bcrypt from "bcrypt";
 import * as http from "http";
-import { Server } from "socket.io";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 
 const app = express();
 const port = 4000;
@@ -14,17 +15,10 @@ const saltRounds = 10;
 let currentUserID = null;
 let currentListType = "daily";
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-  transports: ["websocket"],
-});
 const { Pool } = pg;
-
+const PgSession = connectPgSimple(session);
 env.config();
+
 const pool = new pg.Pool({
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
@@ -35,11 +29,40 @@ const pool = new pg.Pool({
 
 pool.connect();
 
+const corsOptions = {
+  origin: "http://localhost:3000",
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true,
+};
+
 app.use(express.static("public"));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
-app.get("/backend", (req, res) => {
-  return res.json({ message: "This is from backend" });
+
+app.use(
+  session({
+    store: new PgSession({
+      pool: pool, // Use the PostgreSQL pool
+      tableName: "session", // Default is 'session', but you can customize
+    }),
+    secret: process.env.SESSION_SECRET, // Replace with a secure random secret
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      httpOnly: true, // Prevent client-side JavaScript access
+    },
+  })
+);
+
+app.get("/protected", (req, res) => {
+  if (req.session.user) {
+    res.send(`Hello, ${req.session.user}`);
+  } else {
+    res.status(401).send("Unauthorized");
+  }
 });
 
 app.post("/register", async (req, res) => {
@@ -82,6 +105,8 @@ app.post("/login", async (req, res) => {
       const user = data.rows[0];
       const hashedPassword = user.password;
       currentUserID = user.id;
+      req.session.user = user.name;
+      console.log(req.session.user);
       bcrypt.compare(password, hashedPassword, (err, result) => {
         if (err) {
           console.log("Error comparing passwords: ", err);
@@ -162,19 +187,6 @@ app.delete("/user-notes/:id", async (req, res) => {
   }
 });
 
-app.get("/user-notes/updated-since/:timestamp", async (req, res) => {
-  const { lastUpdated } = req.params;
-  try {
-    const result = await pool.query(
-      "SELECT * FROM user_notes WHERE updated_at > $1 ORDER BY updated_at DESC",
-      [lastUpdated]
-    );
-    res.json(result.rows);
-  } catch (error) {
-    console.error("Error selecting notes by timestamp: ", error);
-  }
-});
-
 app.post("/save-to-do", async (req, res) => {
   const listItem = req.body.inputText;
   const listType = req.body.type;
@@ -227,24 +239,18 @@ app.get("/filter-notes", async (req, res) => {
   }
 });
 
-/*
-// Handle WebSocket connections
-io.on("connection", (socket) => {
-  console.log("A user connected");
-
-  // Optional: Handle disconnect event
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
+app.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error destroying session:", err);
+      res.status(500).send("Failed to log out.");
+    } else {
+      res.clearCookie("connect.sid");
+      res.status(200).send("Logged out successfully.");
+    }
   });
-
-  // Handle other events if necessary
 });
 
-app.post("/database-changed", (req, res) => {
-  io.emit("notes-updated");
-  res.send("Database updated.");
-});
-*/
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });

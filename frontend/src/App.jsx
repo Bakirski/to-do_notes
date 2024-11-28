@@ -1,5 +1,5 @@
 // App.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./components/Header.jsx";
 import LoginForm from "./components/LoginForm.jsx";
 import ToDo from "./components/ToDo.jsx";
@@ -21,6 +21,8 @@ function App() {
   const [editedNote, setEditedNote] = useState({ title: "", content: "" });
   const [showRegister, setShowRegister] = useState(true);
   const [showCurrentForm, setShowCurrentForm] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   function handleToggleForm() {
     setShowCurrentForm(false); // Start collapsing out the current form
@@ -80,6 +82,27 @@ function App() {
     }
   }
 
+  async function userLogout() {
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/logout",
+        {},
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        setIsAuthenticated(false);
+        setUserData(null);
+        setSubmittedData(null);
+        console.log("User logged out successfully.");
+      } else {
+        console.error("Failed to log out.");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  }
+
   /*
     If login or registration is successful, returns user data if available.
     If returned data exists, authenticated is set to true and user gains
@@ -90,6 +113,34 @@ function App() {
     if (data) {
       setIsAuthenticated(true);
     }
+  }
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/protected", {
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const data = await response.text();
+          setIsAuthenticated(true);
+          setUserData(data);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
+      } finally {
+        setLoading(false); // Stop the loading state
+      }
+    };
+
+    checkSession();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading indicator
   }
 
   /*
@@ -134,15 +185,20 @@ function App() {
         </div>
       ) : (
         view === null && (
-          <div className="app-options">
-            <button
-              onClick={() => setView("todo")}
-              className="to-do-app-div"
-            ></button>
-            <button
-              onClick={() => setView("notes")}
-              className="notes-app-div"
-            ></button>
+          <div>
+            <div className="logout-button-container">
+              <button onClick={userLogout}>Logout</button>
+            </div>
+            <div className="app-options">
+              <button
+                onClick={() => setView("todo")}
+                className="to-do-app-div"
+              ></button>
+              <button
+                onClick={() => setView("notes")}
+                className="notes-app-div"
+              ></button>
+            </div>
           </div>
         )
       )}

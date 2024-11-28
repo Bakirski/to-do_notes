@@ -8,7 +8,6 @@ function NoteExplorer(props) {
   //state koji prima podatke note-a koji se klikne za prikaz
   const [note, setNote] = useState({ title: "", content: "" });
 
-  const [lastUpdated, setLastUpdated] = useState(new Date().toISOString());
   /*
   dohvata sve naslove notes-a koji se nalaze u bazi
   zajedno sa njihovim id-ovima i ubacuje ih u titles 
@@ -41,22 +40,6 @@ function NoteExplorer(props) {
       });
     } catch (error) {
       console.error("Error fetching note to display: ", error);
-    }
-  }
-
-  async function fetchNotes() {
-    try {
-      const response = await axios.get(
-        `/user-notes/updated-since/${lastUpdated}`
-      );
-      const data = response.data;
-      console.log(data);
-      if (data.length > 0) {
-        setTitles((prevTitles) => [...prevTitles, ...data]);
-        setLastUpdated(new Date().toISOString());
-      }
-    } catch (error) {
-      console.error("Error fetching updated notes: ", error);
     }
   }
 
