@@ -15,7 +15,9 @@ function NoteExplorer(props) {
   */
   async function getNotes() {
     try {
-      const response = await axios.get("http://localhost:4000/get-notes");
+      const response = await axios.get("http://localhost:4000/get-notes", {
+        withCredentials: true,
+      });
       console.log(response.data);
       setTitles(response.data);
       //setTitles(response.data.map((note) => note.title));

@@ -42,20 +42,36 @@ app.use(bodyParser.json());
 app.use(
   session({
     store: new PgSession({
-      pool: pool, // Use the PostgreSQL pool
-      tableName: "session", // Default is 'session', but you can customize
+      pool: pool,
+      tableName: "session",
     }),
-    secret: process.env.SESSION_SECRET, // Replace with a secure random secret
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-      httpOnly: true, // Prevent client-side JavaScript access
+      httpOnly: true,
     },
   })
 );
+
+app.get("/current-user", (req, res) => {
+  if (req.session.userId) {
+    const userId = req.session.userId;
+    pool
+      .query("SELECT name FROM users WHERE id = $1", [userId])
+      .then((result) => {
+        res.json({ name: result.rows[0].name });
+      })
+      .catch((error) => {
+        res.status(500).json({ error: "Failed to fetch user" });
+      });
+  } else {
+    res.status(401).json({ error: "No active session" });
+  }
+});
 
 app.get("/protected", (req, res) => {
   if (req.session.user) {
@@ -83,7 +99,7 @@ app.post("/register", async (req, res) => {
             "INSERT INTO users(name,email,password) VALUES($1,$2,$3) RETURNING id,name",
             [req.body.name, email, hash]
           );
-          currentUserID = data.rows[0].id;
+          req.session.userId = data.rows[0].id;
           const userName = data.rows[0].name;
           res.status(201).json(userName);
         }
@@ -104,16 +120,15 @@ app.post("/login", async (req, res) => {
     if (data.rows.length > 0) {
       const user = data.rows[0];
       const hashedPassword = user.password;
-      currentUserID = user.id;
       req.session.user = user.name;
-      console.log(req.session.user);
+      req.session.userId = user.id;
       bcrypt.compare(password, hashedPassword, (err, result) => {
         if (err) {
           console.log("Error comparing passwords: ", err);
         } else {
           if (result) {
             console.log(user);
-            res.status(201).json(user.name);
+            res.status(201).json(req.session.user);
           } else {
             res.status(404).json("Incorrect password");
           }
@@ -132,7 +147,7 @@ app.post("/notes", async (req, res) => {
   try {
     const data = await pool.query(
       "INSERT INTO user_notes(title,content,userid) VALUES($1,$2,$3) RETURNING *",
-      [title, content, currentUserID]
+      [title, content, req.session.userId]
     );
     res.json(data);
   } catch (error) {
@@ -144,7 +159,7 @@ app.get("/get-notes", async (req, res) => {
   try {
     const data = await pool.query(
       "SELECT id,title FROM user_notes WHERE userid = $1",
-      [currentUserID]
+      [req.session.userId]
     );
     res.json(data.rows);
   } catch (error) {
@@ -193,7 +208,7 @@ app.post("/save-to-do", async (req, res) => {
   try {
     const result = await pool.query(
       "INSERT INTO user_to_do_list(to_do_item,type,userid) VALUES($1,$2,$3) RETURNING id, to_do_item, type",
-      [listItem, listType, currentUserID]
+      [listItem, listType, req.session.userId]
     );
     const newItem = result.rows[0];
     res.json(newItem);
@@ -206,7 +221,7 @@ app.get("/fetch-items", async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT id,to_do_item FROM user_to_do_list WHERE type = $1 AND userid = $2",
-      [currentListType, currentUserID]
+      [currentListType, req.session.userId]
     );
     console.log(result.rows);
     res.json(result.rows);
@@ -231,7 +246,7 @@ app.get("/filter-notes", async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT id,to_do_item FROM user_to_do_list WHERE type = $1 AND userid = $2",
-      [currentListType, currentUserID]
+      [currentListType, req.session.userId]
     );
     res.json(result.rows);
   } catch (error) {

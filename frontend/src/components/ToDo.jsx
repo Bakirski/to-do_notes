@@ -23,7 +23,9 @@ function ToDo() {
 
   async function fetchItems() {
     try {
-      const response = await axios.get("http://localhost:4000/fetch-items");
+      const response = await axios.get("http://localhost:4000/fetch-items", {
+        withCredentials: true,
+      });
 
       setItems(response.data);
     } catch (error) {

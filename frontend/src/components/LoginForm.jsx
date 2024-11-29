@@ -25,7 +25,8 @@ function LoginForm(props) {
     try {
       const response = await axios.post(
         "http://localhost:4000/login",
-        formData
+        formData,
+        { withCredentials: true }
       );
       props.onFormSubmit(response.data);
     } catch (err) {

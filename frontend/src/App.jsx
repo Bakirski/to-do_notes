@@ -19,7 +19,6 @@ function App() {
   const [view, setView] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editedNote, setEditedNote] = useState({ title: "", content: "" });
-  const [showRegister, setShowRegister] = useState(true);
   const [showCurrentForm, setShowCurrentForm] = useState(true);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,11 +31,6 @@ function App() {
       setSignedUp((prev) => !prev);
       setShowCurrentForm(true); // Collapse in the new form
     }, 300);
-  }
-
-  // Toggles between register and login forms based on signed variable
-  function toggleForm(signed) {
-    setSignedUp(!signed);
   }
 
   // Disables edit mode if active and adds note to temporary storage
@@ -116,9 +110,29 @@ function App() {
   }
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/current-user", {
+          withCredentials: true,
+        });
+
+        if (response.data.name) {
+          setSubmittedData(response.data.name);
+        } else {
+          console.log("User not logged in or session expired");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch("http://localhost:3000/protected", {
+        const response = await fetch("http://localhost:4000/protected", {
           credentials: "include",
         });
 
