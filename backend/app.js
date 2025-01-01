@@ -60,6 +60,7 @@ app.use(
 app.get("/current-user", (req, res) => {
   if (req.session.userId) {
     const userId = req.session.userId;
+    console.log("Session id: " , req.session.userId);
     pool
       .query("SELECT name FROM users WHERE id = $1", [userId])
       .then((result) => {
@@ -122,6 +123,7 @@ app.post("/login", async (req, res) => {
       const hashedPassword = user.password;
       req.session.user = user.name;
       req.session.userId = user.id;
+      console.log("session id after login: ", req.session.userId);
       bcrypt.compare(password, hashedPassword, (err, result) => {
         if (err) {
           console.log("Error comparing passwords: ", err);
@@ -205,6 +207,7 @@ app.delete("/user-notes/:id", async (req, res) => {
 app.post("/save-to-do", async (req, res) => {
   const listItem = req.body.inputText;
   const listType = req.body.type;
+  console.log(req.session.userId);
   try {
     const result = await pool.query(
       "INSERT INTO user_to_do_list(to_do_item,type,userid) VALUES($1,$2,$3) RETURNING id, to_do_item, type",

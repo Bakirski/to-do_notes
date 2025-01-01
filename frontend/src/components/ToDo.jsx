@@ -11,7 +11,7 @@ function ToDo() {
       const response = await axios.post("http://localhost:4000/save-to-do", {
         inputText,
         type,
-      });
+      },{withCredentials: true});
       console.log(response.data[0]);
       const newItem = response.data;
       console.log(newItem);

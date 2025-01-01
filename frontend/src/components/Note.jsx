@@ -1,5 +1,23 @@
 import React from "react";
-
+/*
+        <button
+          className="edit-button"
+          onClick={() => {
+            props.onEdit(props.id);
+          }}
+        >
+          Edit
+        </button>
+        <button
+          type="submit"
+          className="save-button"
+          onClick={() => {
+            props.onSave(props.id, props.title, props.content);
+          }}
+        >
+          Save
+        </button>
+        */
 function Note(props) {
   return (
     <div>
@@ -14,6 +32,7 @@ function Note(props) {
         >
           Edit
         </button>
+        
         <button
           className="delete-button"
           onClick={() => {
@@ -22,6 +41,7 @@ function Note(props) {
         >
           Delete
         </button>
+
         <button
           type="submit"
           className="save-button"

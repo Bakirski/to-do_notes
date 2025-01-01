@@ -68,7 +68,7 @@ function App() {
       const response = await axios.post("http://localhost:4000/notes", {
         title,
         content,
-      });
+      }, {withCredentials: true});
       console.log(response);
       deleteNote(id);
     } catch (error) {
