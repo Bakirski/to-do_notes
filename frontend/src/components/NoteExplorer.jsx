@@ -8,6 +8,7 @@ function NoteExplorer(props) {
   //state koji prima podatke note-a koji se klikne za prikaz
   const [note, setNote] = useState({ title: "", content: "" });
 
+  const [editingNote, setEditingNote] = useState({id: "", title: "", content: "" });
   /*
   dohvata sve naslove notes-a koji se nalaze u bazi
   zajedno sa njihovim id-ovima i ubacuje ih u titles 
@@ -26,24 +27,40 @@ function NoteExplorer(props) {
     }
   }
 
-  /*
-  dohvata note koji se odabere u exploreru tako sto trazi odgovarajuci index
-  poslije toga ubacuje dobijene podatke u note useState
-  */
-  async function displayNote(id) {
+  async function getNoteById(id) {
     try {
-      const response = await axios.post("http://localhost:4000/display-note", {
-        id,
-      });
-      console.log(response.data[0]);
-      setNote({
-        title: response.data[0].title,
-        content: response.data[0].content,
-      });
+      const response = await axios.post("http://localhost:4000/get-note", { id });
+      return response.data[0];
     } catch (error) {
-      console.error("Error fetching note to display: ", error);
+      console.error("Error getting note: ", error);
+      return null;
     }
   }
+  
+  async function displayNote(id) {
+    const note = await getNoteById(id);
+    if (note) {
+      setNote({
+        title: note.title,
+        content: note.content,
+      });
+    }
+  }
+  
+  async function fetchNote(id) {
+    const note = await getNoteById(id);
+    if (note) {
+      const fetchedNote = {
+        id: note.id,
+        title: note.title,
+        content: note.content,
+      };
+      setEditingNote(fetchedNote);
+      props.onEdit(fetchedNote);
+    }
+  }
+  
+  
 
   async function deleteNote(id) {
     /*
@@ -121,6 +138,9 @@ function NoteExplorer(props) {
                   >
                     🗑️
                   </button>
+                  <button onClick={() => {
+                    fetchNote(item.id);
+                  }}>✏️</button>
                 </li>
               );
             })}

@@ -18,7 +18,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [view, setView] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [editedNote, setEditedNote] = useState({ title: "", content: "" });
+  const [editedNote, setEditedNote] = useState({id: "", title: "", content: "" });
   const [showCurrentForm, setShowCurrentForm] = useState(true);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -52,13 +52,11 @@ function App() {
     deleteNote(id);
   }
 
-  // Finds note matching provided id and toggles edit mode
-  function editNote(id) {
-    const noteId = parseInt(id);
-    const editingNote = notes.find((element, index) => index === noteId);
-    console.log(editingNote);
-    setEditMode(true);
-    setEditedNote({ title: editingNote.title, content: editingNote.content });
+  function editNote(note) {
+    console.log(note);
+    setEditedNote({id: note.id, title: note.title, content: note.content });
+    console.log(editedNote);
+
   }
 
   // Saves note to PostgreSQL database
@@ -66,6 +64,7 @@ function App() {
     console.log(title, content);
     try {
       const response = await axios.post("http://localhost:4000/notes", {
+        id,
         title,
         content,
       }, {withCredentials: true});
@@ -73,6 +72,19 @@ function App() {
       deleteNote(id);
     } catch (error) {
       console.error("Error saving note: ", error);
+    }
+  }
+
+  async function updateNote(note){
+    const id = editedNote.id;
+    const title = note.title;
+    const content = note.content;
+    try{
+      console.log("Id, title and content: ", id, title, content);
+      const response = await axios.patch("http://localhost:4000/update-note", {id, title, content}, {withCredentials: true});
+      console.log(response);
+    } catch(error){
+      console.error("Error updating note: ", error);
     }
   }
 
@@ -153,6 +165,12 @@ function App() {
     checkSession();
   }, []);
 
+  useEffect(() => {
+    if(editedNote.title !== "" && editedNote.content !== ""){
+      setEditMode(true);
+    }
+  },[editedNote]);
+
   if (loading) {
     return <div>Loading...</div>; // Show a loading indicator
   }
@@ -174,6 +192,7 @@ function App() {
           className="back-button-container"
           onClick={() => {
             setView(null);
+            setEditMode(false);
           }}
         >
           <button>Back</button>
@@ -220,12 +239,15 @@ function App() {
       {view === "todo" && <ToDo />}
       {view === "notes" && (
         <div>
-          <NoteExplorer name={submittedData} addToNotes={addNote} />
+          <NoteExplorer name={submittedData} addToNotes={addNote} onEdit={editNote} />
           {editMode ? (
             <EditNote
               title={editedNote.title}
               content={editedNote.content}
-              onChanged={addNote}
+              onChanged={(note) => {
+                updateNote(note);
+                setEditMode(false);
+              }}
             />
           ) : (
             <CreateNote onAdd={addNote} />
