@@ -31,7 +31,7 @@ pool.connect();
 
 const corsOptions = {
   origin: "http://localhost:3000",
-  methods: "GET,POST,PUT,DELETE",
+  methods: "GET,POST,PATCH,PUT,DELETE",
   credentials: true,
 };
 
@@ -157,6 +157,48 @@ app.post("/notes", async (req, res) => {
   }
 });
 
+app.patch("/update-note", async (req, res) => {
+  const { id, title, content } = req.body;
+
+  // Validate input
+  if (!id || (!title && !content)) {
+    return res.status(400).json({ message: "ID and at least one field (title or content) are required" });
+  }
+
+  try {
+    // Build dynamic query for partial updates
+    const updates = [];
+    const values = [];
+    let query = "UPDATE user_notes SET ";
+
+    if (title) {
+      updates.push("title = $1");
+      values.push(title);
+    }
+
+    if (content) {
+      updates.push("content = $" + (values.length + 1));
+      values.push(content);
+    }
+
+    query += updates.join(", ");
+    query += " WHERE id = $" + (values.length + 1) + " RETURNING *";
+    values.push(id);
+
+    const result = await pool.query(query, values);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    res.status(200).json({ message: "Note updated successfully", note: result.rows[0] });
+  } catch (error) {
+    console.error("Error updating note:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
 app.get("/get-notes", async (req, res) => {
   try {
     const data = await pool.query(
@@ -169,16 +211,17 @@ app.get("/get-notes", async (req, res) => {
   }
 });
 
-app.post("/display-note", async (req, res) => {
+app.post("/get-note", async (req, res) => {
   const id = req.body.id;
   try {
     const data = await pool.query("SELECT * FROM user_notes WHERE id = $1", [
       id,
     ]);
-    console.log(data.rows);
+    console.log("Data from /get-note: ", data.rows);
     res.json(data.rows);
   } catch (error) {
     console.error("Error getting note: ", error);
+    res.status(500).json({ error: "Failed to fetch note" });
   }
 });
 
